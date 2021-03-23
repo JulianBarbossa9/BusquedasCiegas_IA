@@ -197,6 +197,8 @@ class Node():
                         agenda.append(nodo_actual.mov_left)
                         prof_agenda.append(prof_actual + 1)
                         agenda_path_cost.append(right_valor + path_cost_actual)
+
+    def busqueda_primero_Profundidad(self):
     
     
 
