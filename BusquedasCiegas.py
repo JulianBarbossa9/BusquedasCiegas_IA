@@ -2,13 +2,13 @@ import numpy as np
 import time
 
 class Node():
-    def __init__(self, state, parent,action, depth, step_cost, path_cost):
+    def __init__(self, state, parent,action, depth, step_cost):
         self.state = state
         self.parent = parent
         self.action = action 
         self.depth = depth
         self.step_cost = step_cost
-        self.path_cost = path_cost
+        
 
         #Nodos Hijos
         self.mov_up = None
@@ -78,7 +78,7 @@ class Node():
         rastro_action = [self.action]
         rastro_prof = [self.depth]
         rastro_step_cost = [self.step_cost]
-        rastro_path_cost = [self.path_cost]
+       
 
         #Añado informacion a los nodos
         while self.parent:
@@ -88,7 +88,7 @@ class Node():
             rastro_action.append(self.action)
             rastro_prof.append(self.depth)
             rastro_step_cost.append(self.step_cost)
-            rastro_path_cost.append(self.path_cost)
+            
 
         #Contador de pasos
         contador = 0
@@ -153,7 +153,7 @@ class Node():
                     if tuple(new_state.reshape(1,9)[0]) not in visitado:
                         
                         #Creo un nodo hijo
-                        nodo_actual.mov_down = Node (state = new_state, parent = nodo_actual, action = 'arriba', depth = prof_actual + 1, step_cost = up_valor, path_cost = up_valor + path_cost_actual)
+                        nodo_actual.mov_down = Node (state = new_state, parent = nodo_actual, action = 'arriba', depth = prof_actual + 1, step_cost = up_valor)
 
                         agenda.append(nodo_actual.mov_down)
                         prof_agenda.append(prof_actual + 1)
@@ -166,7 +166,7 @@ class Node():
                     if tuple(new_state.reshape(1,9)[0]) not in visitado:
 
                         #Creo un nodo hijo
-                        nodo_actual.mov_right = Node (state = new_state, parent = nodo_actual, action = 'izquierda', depth = prof_actual + 1, step_cost = left_valor, path_cost = left_valor + path_cost_actual)
+                        nodo_actual.mov_right = Node (state = new_state, parent = nodo_actual, action = 'izquierda', depth = prof_actual + 1, step_cost = left_valor)
 
                         agenda.append(nodo_actual.mov_right)
                         prof_agenda.append(prof_actual + 1)
@@ -179,7 +179,7 @@ class Node():
                     if tuple(new_state.reshape(1,9)[0]) not in visitado:
 
                         #Creo un nodo hijo
-                        nodo_actual.mov_up = Node(state = new_state, parent = nodo_actual, action = 'abajo', depth = prof_actual + 1, step_cost = abajo_valor, path_cost = abajo_valor + path_cost_actual)
+                        nodo_actual.mov_up = Node(state = new_state, parent = nodo_actual, action = 'abajo', depth = prof_actual + 1, step_cost = abajo_valor)
 
                         agenda.append(nodo_actual.mov_up)
                         prof_agenda.append(prof_actual + 1)
@@ -192,13 +192,115 @@ class Node():
                     if tuple(new_state.reshape(1,9)[0]) not in visitado:
 
                         #Creo nodo hijo
-                        nodo_actual.mov_left = Node(state = new_state, parent = nodo_actual, action = 'derecha', depth = prof_actual + 1, step_cost = right_valor, path_cost = right_valor + path_cost_actual)
+                        nodo_actual.mov_left = Node(state = new_state, parent = nodo_actual, action = 'derecha', depth = prof_actual + 1, step_cost = right_valor)
 
                         agenda.append(nodo_actual.mov_left)
                         prof_agenda.append(prof_actual + 1)
                         agenda_path_cost.append(right_valor + path_cost_actual)
 
-    def busqueda_primero_Profundidad(self):
+    def busqueda_primero_Profundidad(self, goal_state):
+
+        start = time.time()
+        #Pila de nodos encontrados pero no visitados
+        agenda = [self]
+        # Numero de nodos sacados de la pila
+        agenda_num_nodos_sali = 0
+        #Numero máximo de nodos en la pila, para medir rendimiento del espacio usado
+        agenda_max_length = 1
+        #Profundidad de la pila
+        prof_agenda = [0]
+        #Pila para el coste del trayecto
+        agenda_path_cost = [0]
+        #Recordar nodos visitados (expandidos)
+        visitado = set([])
+
+        while agenda:
+            if len(agenda) > agenda_max_length:
+                agenda_max_length = len(agenda)
+            
+            nodo_actual = agenda.pop(0)#Selecciono y elimino el primer nodo de la pila
+            agenda_num_nodos_sali += 1
+            #Actualizo la profundidad del nodo actual
+            prof_actual = prof_agenda.pop(0)
+            #Actualizar el camino para llegar al nodo actual
+            path_cost_actual = agenda_path_cost.pop(0)
+            #Guardo en "visitado" los nodos ya visitados, asi evitar estados repetidos, que se representa como una tupla - Guarde los estados visitados en una matriz de 1x9
+            visitado.add(tuple(nodo_actual.state.reshape(1,9)[0]))
+
+             #Cuando se encuentre el estado Meta/Final buscar el nodo raiz y mostrar ruta
+            if np.array_equal(nodo_actual.state, goal_state):#Miro si el nodo actual es igual al estados meta si es asi entra
+                nodo_actual.mostrarResul()
+
+                #Muestre resultados
+                #print("Rendimeinto de numero de nodos visitados: " + str(agenda_num_nodos_sali))
+                print ('Nodos salidos de la Pila: ',str(agenda_num_nodos_sali))
+                #print("Numero maximo de nodos visitado: " + str(agenda_max_length))
+                print ('Maximo de nodos en la Pila: ', str(agenda_max_length))
+                #print("Tiempo: %0.2fs " % (time.time()-start))
+                print ('Tiempo: %0.2fs' % (time.time()-start))
+
+                return True
+
+            else: 
+
+                #Miro si se puede mover la baldosa vacia hacia abajo
+                if nodo_actual.mover_abajo():
+                    new_state, up_valor = nodo_actual.mover_abajo()
+                    #Miro si el nodo actual ya ha sido visitado
+                    if tuple(new_state.reshape(1,9)[0]) not in visitado:
+                        
+                        #Creo un nodo hijo
+                        nodo_actual.mov_down = Node (state = new_state, parent = nodo_actual, action = 'arriba', depth = prof_actual + 1, step_cost = up_valor)
+
+                        agenda.insert(0, nodo_actual.mov_down)
+                        prof_agenda.insert(0, prof_actual + 1)
+                        agenda_path_cost.insert(0, path_cost_actual + up_valor)
+                
+                # Miro se se puede mover la baldosa de iz a derecha
+                if nodo_actual.mover_derecha():
+                    new_state, left_valor = nodo_actual.mover_derecha()
+                    #Miro si el nodo ya ha sido visitado
+                    if tuple(new_state.reshape(1,9)[0]) not in visitado:
+
+                        #Creo un nodo hijo
+                        nodo_actual.mov_right = Node (state = new_state, parent = nodo_actual, action = 'izquierda', depth = prof_actual + 1, step_cost = left_valor)
+
+                        agenda.insert(0, nodo_actual.mov_right)
+                        prof_agenda.insert(0, prof_actual + 1)
+                        agenda_path_cost.insert(0, path_cost_actual + left_valor)
+
+                #Miro si se puede mover la baldosa de abajo hacia arriba
+                if nodo_actual.mover_arriba():
+                    new_state, abajo_valor = nodo_actual.mover_arriba()
+                    #Miro si el nodo ya ha sido visitado 
+                    if tuple(new_state.reshape(1,9)[0]) not in visitado:
+
+                        #Creo un nodo hijo
+                        nodo_actual.mov_up = Node(state = new_state, parent = nodo_actual, action = 'abajo', depth = prof_actual + 1, step_cost = abajo_valor)
+
+                        agenda.insert(0, nodo_actual.mov_up)
+                        prof_agenda.insert(0, prof_actual + 1)
+                        agenda_path_cost.insert(0, path_cost_actual + abajo_valor)
+                
+                #Miro si puedo mover la baldosa de der a izquier
+                if nodo_actual.mover_izquier():
+                    new_state, right_valor = nodo_actual.mover_izquier()
+                    #Miro se el nodo ya ha sido visitado
+                    if tuple(new_state.reshape(1,9)[0]) not in visitado:
+
+                        #Creo nodo hijo
+                        nodo_actual.mov_left = Node(state = new_state, parent = nodo_actual, action = 'derecha', depth = prof_actual + 1, step_cost = right_valor)
+
+                        agenda.insert(0, nodo_actual.mov_left)
+                        prof_agenda.insert(0, prof_actual + 1)
+                        agenda_path_cost.insert(0, right_valor + path_cost_actual)
+
+
+
+
+
+
+
     
     
 
@@ -220,9 +322,10 @@ goal_state = np.array([1,2,3,4,5,6,7,8,0]).reshape(3,3)
 print (initial_state,'\n')
 print (goal_state)
 
-root_node = Node(state=initial_state,parent=None,action=None,depth=0,step_cost=0,path_cost=0)
+root_node = Node(state=initial_state,parent=None,action=None,depth=0,step_cost=0)
 # search level by level with queue
 root_node.busqueda_primero_Anchura(goal_state)
+#root_node.busqueda_primero_Profundidad(goal_state)
 
 
 
