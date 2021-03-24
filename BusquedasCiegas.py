@@ -311,10 +311,10 @@ class Node():
 
 
 
-test = np.array([1,2,3,8,6,4,7,5,0]).reshape(3,3)
-easy = np.array([1,3,4,8,6,2,7,0,5]).reshape(3,3)
-medium = np.array([2,8,1,0,4,3,7,6,5]).reshape(3,3)
-hard = np.array([5,6,7,4,0,8,3,2,1]).reshape(3,3)
+prueba1 = np.array([1,2,3,8,6,4,7,5,0]).reshape(3,3)
+prueba2 = np.array([1,3,4,8,6,2,7,0,5]).reshape(3,3)
+prueba3 = np.array([2,8,1,0,4,3,7,6,5]).reshape(3,3)
+prueba4 = np.array([5,6,7,4,0,8,3,2,1]).reshape(3,3)
 ff = np.array([4,5,1,8,3,7,0,6,2]).reshape(3,3)
 
 initial_state = ff
@@ -322,10 +322,9 @@ goal_state = np.array([1,2,3,4,5,6,7,8,0]).reshape(3,3)
 print (initial_state,'\n')
 print (goal_state)
 
-root_node = Node(state=initial_state,parent=None,action=None,depth=0,step_cost=0)
-# search level by level with queue
-root_node.busqueda_primero_Anchura(goal_state)
-#root_node.busqueda_primero_Profundidad(goal_state)
+busquedas = Node(state=initial_state,parent=None,action=None,depth=0,step_cost=0)
+busquedas.busqueda_primero_Anchura(goal_state)
+#busquedas.busqueda_primero_Profundidad(goal_state)
 
 
 
