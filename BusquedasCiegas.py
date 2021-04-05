@@ -420,11 +420,12 @@ class Node():
         agenda_path_cost = [0]
         # Recordar nodos visitados (expandidos)
         visitado = set([])
+
         while agenda:
             if len(agenda) > agenda_max_length:
                 agenda_max_length = len(agenda)
 
-            nodo_actual = agenda.pop(0)  # #Selecciono y elimino el primer nodo de la pila
+            nodo_actual = agenda.pop(0)  # Selecciono y elimino el primer nodo de la pila
             agenda_num_nodos_sali += 1
             # Actualizo la profundidad del nodo actual
             prof_actual = prof_agenda.pop(0)
@@ -445,14 +446,13 @@ class Node():
                     print('Maximo de nodos en la Pila: ', str(agenda_max_length))
                     # print("Tiempo: %0.2fs " % (time.time()-start))
                     print('Tiempo: %0.2fs' % (time.time() - start))
-
                     print('Profundidad alcanzada:', prof_actual)
 
                     return True
 
                 else:
-                    # #print(prof_actual)
-                    # #Miro si se puede mover la baldosa vacia hacia abajo
+
+                    # Miro si se puede mover la baldosa vacia hacia abajo
                     if nodo_actual.mover_abajo():
                         new_state, up_valor = nodo_actual.mover_abajo()
                         # Miro si el nodo actual ya ha sido visitado
@@ -465,18 +465,18 @@ class Node():
                             prof_agenda.insert(0, prof_actual + 1)
                             agenda_path_cost.insert(0, path_cost_actual + up_valor)
 
-                    # Miro si puedo mover la baldosa de der a izquier
-                    if nodo_actual.mover_izquier():
-                        new_state, right_valor = nodo_actual.mover_izquier()
-                        # Miro se el nodo ya ha sido visitado
+                    # Miro se se puede mover la baldosa de iz a derecha
+                    if nodo_actual.mover_derecha():
+                        new_state, left_valor = nodo_actual.mover_derecha()
+                        # Miro si el nodo ya ha sido visitado
                         if tuple(new_state.reshape(1, 9)[0]) not in visitado:
-                            # Creo nodo hijo
-                            nodo_actual.mov_left = Node(state=new_state, parent=nodo_actual, action='derecha',
-                                                        depth=prof_actual + 1, step_cost=right_valor)
+                            # Creo un nodo hijo
+                            nodo_actual.mov_right = Node(state=new_state, parent=nodo_actual, action='izquierda',
+                                                         depth=prof_actual + 1, step_cost=left_valor)
 
-                            agenda.insert(0, nodo_actual.mov_left)
+                            agenda.insert(0, nodo_actual.mov_right)
                             prof_agenda.insert(0, prof_actual + 1)
-                            agenda_path_cost.insert(0, right_valor + path_cost_actual)
+                            agenda_path_cost.insert(0, path_cost_actual + left_valor)
 
                     # Miro si se puede mover la baldosa de abajo hacia arriba
                     if nodo_actual.mover_arriba():
@@ -491,18 +491,18 @@ class Node():
                             prof_agenda.insert(0, prof_actual + 1)
                             agenda_path_cost.insert(0, path_cost_actual + abajo_valor)
 
-                    # Miro se se puede mover la baldosa de iz a derecha
-                    if nodo_actual.mover_derecha():
-                        new_state, left_valor = nodo_actual.mover_derecha()
-                        # Miro si el nodo ya ha sido visitado
+                    # Miro si puedo mover la baldosa de der a izquier
+                    if nodo_actual.mover_izquier():
+                        new_state, right_valor = nodo_actual.mover_izquier()
+                        # Miro se el nodo ya ha sido visitado
                         if tuple(new_state.reshape(1, 9)[0]) not in visitado:
-                            # Creo un nodo hijo
-                            nodo_actual.mov_right = Node(state=new_state, parent=nodo_actual, action='izquierda',
-                                                         depth=prof_actual + 1, step_cost=left_valor)
+                            # Creo nodo hijo
+                            nodo_actual.mov_left = Node(state=new_state, parent=nodo_actual, action='derecha',
+                                                        depth=prof_actual + 1, step_cost=right_valor)
 
-                            agenda.insert(0, nodo_actual.mov_right)
+                            agenda.insert(0, nodo_actual.mov_left)
                             prof_agenda.insert(0, prof_actual + 1)
-                            agenda_path_cost.insert(0, path_cost_actual + left_valor)
+                            agenda_path_cost.insert(0, right_valor + path_cost_actual)
             else:
                 print ('La solución no se encuentra bajo este límite')
                 break
