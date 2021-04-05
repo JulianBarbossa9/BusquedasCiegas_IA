@@ -158,6 +158,7 @@ class Node():
                 print('Maximo de nodos en la Cola: ', str(agenda_max_length))
                 # print("Tiempo: %0.2fs " % (time.time()-start))
                 print('Tiempo: %0.2fs' % (time.time() - start))
+                print('Profundidad alcanzada:', prof_actual)
 
                 return True
 
@@ -255,6 +256,7 @@ class Node():
                 print('Maximo de nodos en la Pila: ', str(agenda_max_length))
                 # print("Tiempo: %0.2fs " % (time.time()-start))
                 print('Tiempo: %0.2fs' % (time.time() - start))
+                print('Profundidad alcanzada:', prof_actual)
 
                 return True
 
@@ -348,6 +350,7 @@ class Node():
                     print(str(agenda_num_nodos_sali), 'Nodos salidos de la agenda.')
                     print('Nodos:', str(agenda_max_length), 'máximo de nodos en la agenda.')
                     print('Tiempo: %0.2fs' % (time.time() - start))
+                    print('Profundidad alcanzada:', prof_actual)
                     return True
 
                 else:
@@ -442,6 +445,8 @@ class Node():
                     print('Maximo de nodos en la Pila: ', str(agenda_max_length))
                     # print("Tiempo: %0.2fs " % (time.time()-start))
                     print('Tiempo: %0.2fs' % (time.time() - start))
+
+                    print('Profundidad alcanzada:', prof_actual)
 
                     return True
 
