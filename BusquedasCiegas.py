@@ -315,52 +315,49 @@ class Node():
     def busqueda_profundidad_iterativa(self, goal_state):
         start = time.time()
 
-        agenda_num_nodos_sali = 0  # number of nodes popped off the agenda, measuring time performance
-        agenda_max_length = 1  # max number of nodes in the agenda, measuring space performance
+        agenda_num_nodos_sali = 0
+        agenda_max_length = 1
 
-        # search the tree that's 40 levels in depth
+
         for limite in range(40):
-            # print ('profundidad límite',límite)
 
-            agenda = [self]  # agenda of found but unvisited nodes, FILO
-            prof_agenda = [0]  # agenda of node depth
-            agenda_path_cost = [0]  # agenda for path cost
-            visitado = set([])  # record visitado states
+            agenda = [self]
+            prof_agenda = [0]
+            agenda_path_cost = [0]
+            visitado = set([])
 
             while agenda:
-                # update maximum length of the agenda
+
                 if len(agenda) > agenda_max_length:
                     agenda_max_length = len(agenda)
 
-                nodo_actual = agenda.pop(0)  # select and remove the first node in the agenda
-                # print 'pop'
-                # print nodo_actual.state
+                nodo_actual = agenda.pop(0)
+
                 agenda_num_nodos_sali += 1
 
-                prof_actual = prof_agenda.pop(0)  # select and remove the depth for current node
-                # print 'depth:',prof_actual,'\n'
+                prof_actual = prof_agenda.pop(0)
+
                 current_path_cost = agenda_path_cost.pop(
-                    0)  # # select and remove the path cost for reaching current node
-                visitado.add(tuple(nodo_actual.state.reshape(1, 9)[0]))  # add state, which is represented as a tuple
+                    0)
+                visitado.add(tuple(nodo_actual.state.reshape(1, 9)[0]))
 
                 # when the goal state is found, trace back to the root node and print out the path
                 if np.array_equal(nodo_actual.state, goal_state):
                     nodo_actual.mostrarResul()
 
-                    print('Time performance:', str(agenda_num_nodos_sali), 'nodes popped off the agenda.')
-                    print('Space performance:', str(agenda_max_length), 'nodes in the agenda at its max.')
-                    print('Time spent: %0.2fs' % (time.time() - start))
+                    print(str(agenda_num_nodos_sali), 'Nodos salidos de la agenda.')
+                    print('Nodos:', str(agenda_max_length), 'máximo de nodos en la agenda.')
+                    print('Tiempo: %0.2fs' % (time.time() - start))
                     return True
 
                 else:
                     if prof_actual < limite:
 
-                        # see if moving upper tile down is a valid move
                         if nodo_actual.mover_abajo():
                             new_state, up_value = nodo_actual.mover_abajo()
-                            # check if the resulting node is already visitado
+
                             if tuple(new_state.reshape(1, 9)[0]) not in visitado:
-                                # create a new child node
+
                                 nodo_actual.move_down = Node(state=new_state, parent=nodo_actual, action='down',
                                                              depth=prof_actual + 1,
                                                              step_cost=up_value)
@@ -368,12 +365,11 @@ class Node():
                                 prof_agenda.insert(0, prof_actual + 1)
                                 agenda_path_cost.insert(0, current_path_cost + up_value)
 
-                        # see if moving left tile to the right is a valid move
                         if nodo_actual.mover_derecha():
                             new_state, left_value = nodo_actual.mover_derecha()
-                            # check if the resulting node is already visitado
+
                             if tuple(new_state.reshape(1, 9)[0]) not in visitado:
-                                # create a new child node
+
                                 nodo_actual.move_right = Node(state=new_state, parent=nodo_actual, action='right',
                                                               depth=prof_actual + 1,
                                                               step_cost=left_value)
@@ -381,12 +377,12 @@ class Node():
                                 prof_agenda.insert(0, prof_actual + 1)
                                 agenda_path_cost.insert(0, current_path_cost + left_value)
 
-                        # see if moving lower tile up is a valid move
+
                         if nodo_actual.mover_arriba():
                             new_state, lower_value = nodo_actual.mover_arriba()
-                            # check if the resulting node is already visitado
+
                             if tuple(new_state.reshape(1, 9)[0]) not in visitado:
-                                # create a new child node
+
                                 nodo_actual.move_up = Node(state=new_state, parent=nodo_actual, action='up',
                                                            depth=prof_actual + 1,
                                                            step_cost=lower_value)
@@ -394,12 +390,11 @@ class Node():
                                 prof_agenda.insert(0, prof_actual + 1)
                                 agenda_path_cost.insert(0, current_path_cost + lower_value)
 
-                        # see if moving right tile to the left is a valid move
                         if nodo_actual.mover_izquier():
                             new_state, right_value = nodo_actual.mover_izquier()
-                            # check if the resulting node is already visitado
+
                             if tuple(new_state.reshape(1, 9)[0]) not in visitado:
-                                # create a new child node
+
                                 nodo_actual.move_left = Node(state=new_state, parent=nodo_actual, action='left',
                                                              depth=prof_actual + 1,
                                                              step_cost=right_value)
