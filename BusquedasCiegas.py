@@ -407,7 +407,7 @@ class Node():
                                 prof_agenda.insert(0, prof_actual + 1)
                                 agenda_path_cost.insert(0, current_path_cost + right_value)
 
-    def busqueda_Profundidad_Limitada(self, goal_state):
+    def busqueda_Profundidad_Limitada(self, goal_state, limit):
 
         start = time.time()
         # Pila de nodos encontrados pero no visitados
@@ -434,7 +434,7 @@ class Node():
             path_cost_actual = agenda_path_cost.pop(0)
             # Guardo en "visitado" los nodos ya visitados, asi evitar estados repetidos, que se representa como una tupla - Guarde los estados visitados en una matriz de 1x9
             visitado.add(tuple(nodo_actual.state.reshape(1, 9)[0]))
-            if prof_actual < 5:
+            if prof_actual < limit:
                 # Cuando se encuentre el estado Meta/Final buscar el nodo raiz y mostrar ruta
                 if np.array_equal(nodo_actual.state,
                                   goal_state):  # Miro si el nodo actual es igual al estados meta si es asi entra
@@ -512,6 +512,7 @@ raiz.resizable(False, False)
 
 vactualini = StringVar()
 vactualfin = StringVar()
+limit = StringVar()
 
 frametot = Frame(raiz, width=1200, height=600)
 frametot.pack()
@@ -529,6 +530,9 @@ frame4.pack(fill="x", padx=15, side='right')
 # frame4.config(bg="blue")
 labelini = Label(frametot, text="Ingrese el estado inicial separado por comas")
 labelini.grid(row=0, column=0, padx=15, pady=10)
+
+labelLimit = Label(frame2, text="Limite")
+labelLimit.grid(row=2, column=11, padx=15, pady=10)
 
 labelfin = Label(frametot, text="Ingrese el estado final separado por comas")
 labelfin.grid(row=0, column=2, padx=15, pady=10)
@@ -548,7 +552,7 @@ labelhisto.grid(row=8, column=10)
 labelmeto = Label(frametot, text="Metodo")
 labelmeto.grid(row=3, column=4)
 
-movimientos = Text(frame4, width=30, height=15, state='normal')
+movimientos = Text(frame4, width=20, height=15, state='normal')
 movimientos.grid(row=6, column=8, padx=5, pady=20)
 
 labelaux = Label(frame3)
@@ -559,6 +563,9 @@ valini.grid(row=2, column=0, pady=5)
 
 valfin = Entry(frametot, textvariable=vactualfin)
 valfin.grid(row=2, column=2, pady=5)
+
+valLimit = Entry(frame2, textvariable=limit, state='normal', width=5)
+valLimit.grid(row=3, column=11, pady=5)
 
 
 def jugar():
@@ -572,8 +579,10 @@ def jugar():
         Node(state=initial_state, parent=None, action=None, depth=0, step_cost=0).busqueda_primero_Profundidad(
             goal_state)
     elif metodo.current() == 2:
+        limits = valLimit.get()
+        limite = int(limits)
         Node(state=initial_state, parent=None, action=None, depth=0, step_cost=0).busqueda_Profundidad_Limitada(
-            goal_state)
+            goal_state, limite)
     elif metodo.current() == 3:
         Node(state=initial_state, parent=None, action=None, depth=0, step_cost=0).busqueda_profundidad_iterativa(
             goal_state)
@@ -604,9 +613,10 @@ botoninicio.grid(row=5, column=4, padx=10)
 metodo = ttk.Combobox(frametot, state="readonly",
                       values=["Búsqueda en anchura", "Búsqueda en profundidad", "Búsqueda en profundidad limitada",
                               "Búsqueda en profundidad iterada"])
-metodo.current(0)
+metodo.current(2)
 metodo.config(width=30)
 metodo.grid(row=4, column=4, padx=10, pady=5)
+
 # visual de estados
 
 boton0 = Button(frame2, text=" ", height=2, width=5)
