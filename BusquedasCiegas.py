@@ -503,7 +503,9 @@ class Node():
                             agenda.insert(0, nodo_actual.mov_right)
                             prof_agenda.insert(0, prof_actual + 1)
                             agenda_path_cost.insert(0, path_cost_actual + left_valor)
-
+            else:
+                print ('La solución no se encuentra bajo este límite')
+                break
 
 raiz = Tk()
 raiz.title("Puzzle n*n metodos de busqueda")
